@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles2.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200i,300,400&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:700&amp;display=swap" rel="stylesheet">
+    <title>Galerim</title>
+</head>
+<body>
+    <!-- START NAV -->
+    <nav id="navbar" class="nav">
+        <ul class="nav-list">
+            <li><a href="#welcome-section">About</a></li>
+            <li><a href="#projects">Work</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    <!-- END NAV -->
+
+    <!-- START WELCOME SECTION -->
+    <section id="welcome-section" class="welcome-section">
+        <img src="lokman-logo.png" class="lokman-logo">
+        <h1>Hey I am Lokman</h1>
+        <p>a vet</p>
+    </section>
+    <!-- END WELCOME SECTION -->
+
+    <!-- START PROJECTS SECTION -->
+    <section id="projects" class="projects-section">
+        <h2 class="projects-section-header">These are some of my projects</h2>
+        <div class="gallery" id="gallery"></div>
+        <div id="modal" class="modal" onclick="closeModal()">
+          <span class="close" onclick="closeModal()">&times;</span>
+          <img class="modal-content" id="modal-image">
+          <div class="thumbnail-container" id="thumbnail-container"></div>
+
+          <a class="prev" onclick="changeImage(-1); event.stopPropagation();">&#10094;</a>
+          <a class="next" onclick="changeImage(1); event.stopPropagation();">&#10095;</a>
+      </div>
+          <a class="prev" onclick="changeImage(-1)">&#10094;</a>
+          <a class="next" onclick="changeImage(1)">&#10095;</a>
+      </div>
+    </section>
+    <!-- END PROJECTS SECTION -->
+
+    <!-- START CONTACT SECTION -->
+    <section id="contact" class="contact-section">
+        <div class="contact-section-header">
+            <h2>Let's work together...</h2>
+            <p>How can I help you?</p>
+        </div>
+        <div class="contact-links">
+            <a href="https://www.facebook.com/profile.php?id=727012227" target="_blank" class="btn contact-details"><i class="fab fa-facebook-square"></i> Facebook</a>
+            <a href="https://www.instagram.com/uzm.vet.lokmanhekim/?hl=en" target="_blank" class="btn contact-details"><i class="fab fa-instagram"></i> Instagram</a>
+            <a href="mailto:lkmnyldz@hotmail.com" class="btn contact-details"><i class="fas fa-at"></i> Send a mail</a>
+            <a href="tel:+31 687 98 16 41" class="btn contact-details"><i class="fas fa-mobile-alt"></i> Call me (+31 687 98 16 41)</a>
+        </div>
+    </section>
+    <!-- END CONTACT SECTION -->
+
+    <!-- START FOOTER SECTION -->
+    <footer>
+        <p>© Created by <a href="https://www.linkedin.com/in/aliekremsan/en" target="_blank">DojoCho</a></p>
+    </footer>
+    <!-- END FOOTER SECTION -->
+
+    <script>
+    
+    window.onload = function() {
+    closeModal(); // Modalı kapat
+    updateModalImage(); // İlk resmi güncelle
+};
+
+const images = [];
+const totalImages = 22; // Toplam resim sayısını buradan belirleyin
+
+// Resim dosyalarını otomatik olarak oluştur
+for (let i = 1; i <= totalImages; i++) {
+    images.push(`img/${i}.jpg`); // img/1.jpg, img/2.jpg, ...
+}
+
+let currentImageIndex = 0;
+let isChangingImage = false; // Eklenen flag
+
+// Galeri ve thumbnail elemanlarını oluştur
+const gallery = document.getElementById('gallery');
+const thumbnailContainer = document.getElementById('thumbnail-container');
+
+// Galeri resimlerini oluştur
+images.forEach((src, index) => {
+    // Galeri için resim
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = `Fotoğraf ${index + 1}`;
+    img.onclick = () => openModal(index); // Tıklama olayı
+    gallery.appendChild(img);
+
+    // Thumbnail için resim
+    const thumbnail = document.createElement('img');
+    thumbnail.src = src;
+    thumbnail.alt = `Thumbnail ${index + 1}`;
+    thumbnail.classList.add('thumbnail');
+    thumbnail.onclick = (event) => {
+        openModal(index); // Thumbnail'a tıklayınca aç
+        event.stopPropagation(); // Modal kapanmasın
+    };
+    thumbnailContainer.appendChild(thumbnail); // Thumbnail'ı ekle
+});
+
+// Modal açma fonksiyonu
+function openModal(index) {
+    currentImageIndex = index;
+    updateModalImage();
+    document.getElementById('modal').style.display = "block";
+    document.querySelector('.prev').style.display = "block";
+    document.querySelector('.next').style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = "none";
+    document.querySelector('.prev').style.display = "none";
+    document.querySelector('.next').style.display = "none";
+}
+
+function changeImage(direction) {
+    if (isChangingImage) return; // Eğer değişim devam ediyorsa çık
+
+    isChangingImage = true; // Değişimi başlat
+    currentImageIndex += direction;
+
+    // Dizi sınırlarını kontrol et
+    if (currentImageIndex < 0) {
+        currentImageIndex = images.length - 1; // En son elemana git
+    } else if (currentImageIndex >= images.length) {
+        currentImageIndex = 0; // İlk elemana git
+    }
+
+    updateModalImage();
+
+    setTimeout(() => {
+        isChangingImage = false; // Değişimi bitir
+    }, 500); // 500 ms bekle
+}
+
+function updateModalImage() {
+    const modalImage = document.getElementById('modal-image');
+    modalImage.src = images[currentImageIndex];
+
+    // Küçük resimleri güncelle
+    const smallImages = document.querySelectorAll('.thumbnail');
+    smallImages.forEach((img, index) => {
+        img.classList.remove('active');
+        if (index === currentImageIndex) {
+            img.classList.add('active'); // Aktif resmi vurgula
+        }
+    });
+}
+
+// Event listeners for next and previous buttons
+document.querySelector('.prev').addEventListener('click', (event) => {
+    event.stopPropagation(); // Modal kapanmasın
+    changeImage(-1);
+});
+
+document.querySelector('.next').addEventListener('click', (event) => {
+    event.stopPropagation(); // Modal kapanmasın
+    changeImage(1);
+});
+
+// Modal dışına tıkladığınızda modalı kapat
+document.getElementById('modal').addEventListener('click', closeModal);
+
+
+
+
+
+
+
+    </script>
+
+</body>
+</html>
